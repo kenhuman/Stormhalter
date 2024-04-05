@@ -5,10 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using CommonServiceLocator;
-using ICSharpCode.AvalonEdit.Document;
 using Kesmai.WorldForge.Editor;
-using Kesmai.WorldForge.Scripting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
@@ -26,14 +23,15 @@ public class CustomRoslynHost : RoslynHost
 			Assembly.Load("RoslynPad.Roslyn.Windows"),
 			Assembly.Load("RoslynPad.Editor.Windows"),
 		}, 
-		RoslynHostReferences.NamespaceDefault.With(imports: new []
+		RoslynHostReferences.NamespaceDefault.With(imports: new[]
 		{
 			"WorldForge",
 		}))
 	{
 		_resolver = new CustomResolver(segment);
 	}
-        
+    
+	
 	protected override Project CreateProject(Solution solution, DocumentCreationArgs args, CompilationOptions compilationOptions, Project? previousProject = null)
 	{
 		var name = "WorldForge";
@@ -42,7 +40,7 @@ public class CustomRoslynHost : RoslynHost
 			kind: SourceCodeKind.Script,
 			languageVersion: LanguageVersion.CSharp8
 		);
-			
+					
 		compilationOptions = compilationOptions
 			.WithScriptClassName(name)
 			.WithSourceReferenceResolver(_resolver);
@@ -52,14 +50,14 @@ public class CustomRoslynHost : RoslynHost
 			compilationOptions = csharpCompilationOptions
 				.WithNullableContextOptions(NullableContextOptions.Disable);
 		}
-			
-		var references = new List<MetadataReference>()
-		{
-			MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-			MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
-		};
 
-		var scriptingData = Core.ScriptingData;
+        var references = new List<MetadataReference>()
+        {
+            MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
+        };
+
+        var scriptingData = Core.ScriptingData;
 			
 		if (scriptingData != null)
 			references.Add(MetadataReference.CreateFromImage(scriptingData));

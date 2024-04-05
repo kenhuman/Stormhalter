@@ -63,13 +63,15 @@ public class ScriptEditor : RoslynCodeEditor
 			UpdateText();
 	}
 
-	private void OnLoaded(object sender, RoutedEventArgs e)
+	private async void OnLoaded(object sender, RoutedEventArgs e)
 	{
 		var services = (ServiceContainer)ServiceLocator.Current;
 		var applicationPresenter = services.GetInstance<ApplicationPresenter>();
 
-		Initialize(applicationPresenter.RoslynHost, new ClassificationHighlightColors(),
-			Directory.GetCurrentDirectory(), String.Empty);
+		
+
+		await InitializeAsync(applicationPresenter.RoslynHost, new ClassificationHighlightColors(),
+			Directory.GetCurrentDirectory(), String.Empty, Microsoft.CodeAnalysis.SourceCodeKind.Script).ConfigureAwait(true);
 		
 		_initialized = true;
 	}
